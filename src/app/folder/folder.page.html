@@ -1,0 +1,283 @@
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title> {{ getPageTitle() }} </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- TRANG CHỦ -->
+  <div *ngIf="folder === 'home'" class="page-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-card-title>
+          <ion-icon name="home" color="primary"></ion-icon>
+          Chào mừng đến với {{ appInfo.name }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ appInfo.description }}</p>
+        <p><strong>Phiên bản:</strong> {{ appInfo.version }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="map" color="success"></ion-icon>
+          Tính năng chính
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-icon name="location" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Định vị GPS</h3>
+              <p>Xác định vị trí hiện tại bằng GPS</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="map" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h3>Bản đồ chuyên đề</h3>
+              <p>Hiển thị các lớp thông tin chuyên đề</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="layers" slot="start" color="warning"></ion-icon>
+            <ion-label>
+              <h3>Đa lớp bản đồ</h3>
+              <p>Hỗ trợ Google Maps và OpenStreetMap</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- TRANG GIỚI THIỆU -->
+  <div *ngIf="folder === 'about'" class="page-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="information-circle" color="primary"></ion-icon>
+          Thông tin ứng dụng
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              <h3>Tên ứng dụng</h3>
+              <p>{{ appInfo.name }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Mô tả</h3>
+              <p>{{ appInfo.description }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Phiên bản</h3>
+              <p>{{ appInfo.version }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="people" color="success"></ion-icon>
+          Thông tin nhóm
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              <h3>Tên nhóm</h3>
+              <p>{{ teamInfo.groupName }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Lớp</h3>
+              <p>{{ teamInfo.className }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Chuyên ngành</h3>
+              <p>{{ teamInfo.major }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <h4>Thành viên nhóm:</h4>
+        <ion-list>
+          <ion-item *ngFor="let member of teamInfo.members">
+            <ion-icon name="person" slot="start" color="medium"></ion-icon>
+            <ion-label>{{ member }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- TRANG KHÁM PHÁ BẢN ĐỒ -->
+  <div *ngIf="folder === 'explore'" class="page-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-toolbar>
+          <ion-searchbar
+            placeholder="Tìm kiếm địa điểm"
+            (ionInput)="onSearch($event)"
+            debounce="500"
+          ></ion-searchbar>
+        </ion-toolbar>
+        <ion-list *ngIf="searchResults.length > 0">
+          <ion-item
+            *ngFor="let result of searchResults"
+            (click)="selectSearchResult(result)"
+          >
+            {{ result.display_name }}
+          </ion-item>
+        </ion-list>
+        <ion-card-title>
+          <ion-icon name="map" color="primary"></ion-icon>
+          Bản đồ chuyên đề
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="getCurrentLocation()"
+        >
+          <ion-icon name="locate" slot="start"></ion-icon>
+          Lấy vị trí hiện tại
+        </ion-button>
+
+        <div *ngIf="currentLocation" class="location-info">
+          <h4>Vị trí hiện tại:</h4>
+          <p>
+            <strong>Latitude:</strong> {{ currentLocation.latitude |
+            number:'1.6-6' }}
+          </p>
+          <p>
+            <strong>Longitude:</strong> {{ currentLocation.longitude |
+            number:'1.6-6' }}
+          </p>
+          <p><strong>Độ chính xác:</strong> {{ currentLocation.accuracy }}m</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- FIX: Map container đơn giản hóa -->
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="layers" color="success"></ion-icon>
+          Lớp bản đồ chuyên đề
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let layer of thematicLayers">
+            <ion-icon name="location" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>{{ layer.name }}</h3>
+              <p>{{ layer.description }}</p>
+              <p><small>{{ layer.data.length }} điểm dữ liệu</small></p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- TRANG LIÊN HỆ -->
+  <div *ngIf="folder === 'contact'" class="page-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="mail" color="primary"></ion-icon>
+          Thông tin liên hệ
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-icon name="mail" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Email</h3>
+              <p>gis.mobile.app&#64;.com</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="call" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h3>Điện thoại</h3>
+              <p>+84 123 456 789</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="location" slot="start" color="warning"></ion-icon>
+            <ion-label>
+              <h3>Địa chỉ</h3>
+              <p>
+                Khoa Tài Nguyên Môi Trường<br />
+                Trường Đại học Nông Lâm <br />
+                TP. Hồ Chí Minh, Việt Nam
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="send" color="secondary"></ion-icon>
+          Gửi phản hồi
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Họ tên</ion-label>
+          <ion-input type="text" placeholder="Nhập họ tên của bạn"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input type="email" placeholder="Nhập email của bạn"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Nội dung</ion-label>
+          <ion-textarea
+            placeholder="Nhập nội dung phản hồi"
+            rows="4"
+          ></ion-textarea>
+        </ion-item>
+        <ion-button expand="block" color="primary" style="margin-top: 16px">
+          <ion-icon name="send" slot="start"></ion-icon>
+          Gửi phản hồi
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

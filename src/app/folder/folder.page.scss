@@ -1,0 +1,191 @@
+ion-menu-button {
+  color: var(--ion-color-primary);
+}
+
+#container {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+
+.page-content {
+  padding: 16px;
+}
+
+// FIX CHÍNH: Bỏ wrapper và cải thiện map container
+.map-container {
+  height: 400px; // Tăng chiều cao để cân bằng
+  width: 100%;
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+
+  // QUAN TRỌNG: Fix vấn đề tự động resize
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+}
+
+// Fix cho div map
+#map {
+  height: 100% !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 1;
+
+  // Ngăn chặn resize tự động
+  .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  // Fix scroll behavior
+  .leaflet-control-container {
+    pointer-events: auto;
+  }
+
+  // Ngăn map expand khi touch/scroll
+  .leaflet-touch .leaflet-control-layers {
+    pointer-events: auto;
+  }
+}
+
+.map-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: var(--ion-color-light);
+
+  p {
+    margin-top: 8px;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+  }
+}
+
+.location-info {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: var(--ion-color-primary);
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+}
+
+// Custom icon styles for map markers
+.custom-icon {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  text-align: center;
+  line-height: 30px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.university-icon {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.hospital-icon {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+// QUAN TRỌNG: Global Leaflet fixes
+.leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  position: relative !important;
+
+  // Ngăn chặn auto-resize khi scroll
+  &.leaflet-touch {
+    .leaflet-bar {
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+  }
+}
+
+// Fix cho touch events trên mobile
+.leaflet-touch {
+  .leaflet-control-layers {
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+  }
+
+  .leaflet-bar a {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+  }
+}
+
+// Ngăn chặn map container thay đổi kích thước
+.leaflet-map-pane {
+  position: relative !important;
+}
+
+// Responsive adjustments - Giảm độ phức tạp
+@media (max-width: 768px) {
+  .map-container {
+    height: 300px;
+    margin: 12px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-container {
+    height: 250px;
+    margin: 8px 0;
+  }
+}
+
+// Card spacing
+ion-card {
+  margin-bottom: 16px;
+}
+
+// Icon spacing in lists
+ion-item ion-icon[slot="start"] {
+  margin-right: 16px;
+}
